@@ -1,0 +1,50 @@
+.navbar {
+    width: 100%;
+    height: 60px; 
+    background-color: blue;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;   
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.nav-spacer {
+    flex: 1; /* Pushes search to center */
+}
+
+.search-container {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.search-input {
+    padding: 8px;
+    width: 300px;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+}
+
+.nav-links {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white !important;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap; /* Essential: prevents text from splitting */
+}
+
+.nav-links a:hover {
+    color: lightgray !important;
+}

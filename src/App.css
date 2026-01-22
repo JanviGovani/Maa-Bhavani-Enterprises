@@ -1,0 +1,81 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* This targets the Navbar component and forces it to the top */
+.navbar {
+  margin-top: 0 !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* Remove default centering */
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;         /* Add this */
+  flex-direction: column; /* Add this */
+}
+
+/* ===== GRID LAYOUT ===== */
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.grid-item {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  background-color: #f9f9f9;
+  transition: transform 0.2s;
+}
+
+.grid-item:hover {
+  transform: scale(1.03);
+}
+
+.grid-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-label {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.app-content {
+  padding-top: 0px; /* match navbar height */
+  margin-top: 0px;
+}
+
+.app-content h2 {
+  text-align: center;
+  margin-top: 0 !important;    /* Remove top margin */
+  padding-top: 20px; /* Use padding instead for internal spacing */
+  margin-bottom: 1rem;
+}
+
+/* This ensures the search area touches the very top of the page */
+.search-container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex: 2; /* This keeps it centered between spacers */
+}
