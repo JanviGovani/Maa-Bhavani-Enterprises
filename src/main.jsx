@@ -8,6 +8,7 @@ import Navbar from "./components/navbar";
 import About from "./components/about";
 import Contact from "./components/contact";
 import Footer from './components/footer'
+import ProductSizes from './productSizes'; // Ensure the filename matches exactly
 
 const RootComponent = () => {
   // 2. Move search state here
@@ -30,6 +31,7 @@ const RootComponent = () => {
         <Route path="/" element={<App searchTerm={searchTerm} />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/product/:id" element={<ProductSizes />} />
       </Routes>
       <Footer/>
     </Router>
