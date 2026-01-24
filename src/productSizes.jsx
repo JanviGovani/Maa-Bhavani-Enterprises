@@ -16,6 +16,7 @@ const items = [
 const ProductSizes = () => {
   const { id } = useParams(); // Gets the ID of the clicked product
   const navigate = useNavigate();
+  const product = items.find((item) => item.id === parseInt(id));
 
   // This is a placeholder array. In a real app, you'd filter this based on the ID.
   const sizeVariations = [
@@ -34,7 +35,7 @@ const ProductSizes = () => {
         ← Back to Gallery
       </button>
 
-      <h2>Product Variations for Item ID: {id}</h2>
+      <h2>Product Variations for {product ? product.name : "Item"}</h2>
       <p>Select the required size below:</p>
 
       <div style={{ 
