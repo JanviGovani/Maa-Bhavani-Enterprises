@@ -2,7 +2,7 @@ import React, { useState} from 'react'
 import {StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App'
+import Home from './Home'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar";
 import About from "./components/about";
@@ -28,7 +28,7 @@ const RootComponent = () => {
       />
       <Routes>
         {/* 4. Pass searchTerm to App so it can highlight items */}
-        <Route path="/" element={<App searchTerm={searchTerm} />} />
+        <Route path="/" element={<Home searchTerm={searchTerm} />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:id" element={<ProductSizes />} />
