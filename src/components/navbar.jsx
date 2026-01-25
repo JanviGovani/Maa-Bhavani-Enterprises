@@ -21,7 +21,7 @@ function Navbar({ showSearchBar,searchTerm, onSearchChange }){
                 </div>
             )}
         <div className="nav-links">
-            <Link to="/" >App</Link> 
+            <Link to="/" >Home</Link> 
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
         </div>
