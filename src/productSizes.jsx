@@ -42,6 +42,14 @@ const ProductSizes = () => {
     return () => clearTimeout(timer);
   }, [id]); // Running this when 'id' changes ensures it triggers on every click
 
+  const [quantity, setQuantity] = useState(1); // Default to 1
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 3000); // Reset button after 3 seconds
+  };
+
   const product = items.find((item) => item.id === parseInt(id));
 
   if (loading) {
@@ -77,6 +85,7 @@ const ProductSizes = () => {
             gap: "20px", 
             marginTop: "20px" 
           }}>
+
             {sizeVariations.map((variant) => (
               <div key={variant.sizeId} style={{ 
                 border: '1px solid #ddd', 
@@ -93,6 +102,54 @@ const ProductSizes = () => {
               </div>
             ))}
           </div>
+            
+          <div style={{ marginTop: '25px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label style={{ fontWeight: 'bold' }}>Quantity:</label>
+            <input 
+              type="number" 
+              value={quantity} 
+              onChange={(e) => {
+                const val = e.target.value;
+                // Allow empty string so user can delete the number to type a new one
+                if (val === "") {
+                    setQuantity(""); 
+                } else {
+                    const num = parseInt(val);
+                    // Only update if it's a positive number
+                    if (num >= 1) setQuantity(num);
+                }
+              }}
+              min="1"
+              style={{ 
+                width: '60px', 
+                padding: '8px', 
+                borderRadius: '4px', 
+                border: '1px solid #ccc',
+                textAlign: 'center' 
+              }} 
+            />
+          </div>
+
+          <button 
+            onClick={handleAddToCart}
+            disabled={!quantity} // Button turns off if box is empty
+            style={{
+              padding: '10px 25px',
+              backgroundColor: isAdded ? '#28a745' : '#007bff', // Green when added, Blue normally
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: !quantity ? 'not-allowed' : 'pointer',
+              fontWeight: 'bold',
+              transition: '0.3s',
+              opacity: !quantity ? 0.5 : 1, // Make it look faded when disabled
+            }}
+          >
+            {isAdded ? "Added to Cart ✓" : "Add to Cart"}
+          </button>
+          </div>
+
         </>
       ) : (
         <div style={{ marginTop: '20px' }}>
@@ -101,8 +158,55 @@ const ProductSizes = () => {
             alt={product.name} 
             style={{ width: "300px", borderRadius: "8px", border: "1px solid #ccc" }} 
           />
-          <h3 style={{ color: 'green', marginTop: '15px' }}>Price: ₹500</h3>
+          {/* <h3 style={{ color: 'green', marginTop: '15px' }}>Price: ₹500</h3> */}
           <p>Standard quality {product.name} available in stock.</p>
+
+          <div style={{ marginTop: '25px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label style={{ fontWeight: 'bold' }}>Quantity:</label>
+            <input 
+              type="number" 
+              value={quantity} 
+              onChange={(e) => {
+                const val = e.target.value;
+                // Allow empty string so user can delete the number to type a new one
+                if (val === "") {
+                    setQuantity(""); 
+                } else {
+                    const num = parseInt(val);
+                    // Only update if it's a positive number
+                    if (num >= 1) setQuantity(num);
+                }
+              }}
+              min="1"
+              style={{ 
+                width: '60px', 
+                padding: '8px', 
+                borderRadius: '4px', 
+                border: '1px solid #ccc',
+                textAlign: 'center' 
+              }} 
+            />
+          </div>
+
+          <button 
+            onClick={handleAddToCart}
+            disabled={!quantity} // Button turns off if box is empty
+            style={{
+              padding: '10px 25px',
+              backgroundColor: isAdded ? '#28a745' : '#007bff', // Green when added, Blue normally
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: !quantity ? 'not-allowed' : 'pointer',
+              fontWeight: 'bold',
+              transition: '0.3s',
+              opacity: !quantity ? 0.5 : 1, // Make it look faded when disabled
+            }}
+          >
+            {isAdded ? "Added to Cart ✓" : "Add to Cart"}
+          </button>
+          </div>
         </div>
       )}
     </div>
