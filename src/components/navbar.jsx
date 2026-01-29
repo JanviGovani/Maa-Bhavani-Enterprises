@@ -6,8 +6,12 @@ function Navbar({ showSearchBar,searchTerm, onSearchChange }){
     return(
         <nav className="navbar">
 
-            {/* 1. Placeholder to push search to center */}
-            <div className="nav-spacer"></div>
+            {/* Logo on the left side */}
+            <div className="navbar-left">
+                <Link to="/">
+                    <img src="/MB-logo.png" alt="MB Logo" className="nav-logo" />
+                </Link>
+            </div>
 
             {showSearchBar && (
                 <div className="search-container">
