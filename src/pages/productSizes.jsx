@@ -1,32 +1,35 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react'; // Add useState and useEffect
-import Loader from './components/loader';           // Ensure Loader is imported
+import Loader from '../components/loader';           // Ensure Loader is imported
+import { useCart } from '../components/cartContext';
 
 const items = [
-  { id: 1, name: "Thunder Hose Pipe", hasSizes: true },
-  { id: 2, name: "Canvas Hose Pipes", hasSizes: false },
-  { id: 3, name: "Section Pipes", hasSizes: true },
-  { id: 4, name: "Butyl Water Proofing Tapes for ceiling(SHED) repairs", hasSizes: true },
-  { id: 5, name: "Tractor Pumps", hasSizes: false },
-  { id: 6, name: "Water Circulation Pumps", hasSizes: false },
-  { id: 7, name: "Rubber Flange Washers", hasSizes: false },
-  { id: 8, name: "CI Flanges", hasSizes: false },
-  { id: 9, name: "Bends", hasSizes: true },
-  { id: 10, name: "Grove Bends", hasSizes: true },
-  { id: 11, name: "CI Hose Collars", hasSizes: true },
-  { id: 12, name: "Reduce Hose Collars", hasSizes: true },
-  { id: 13, name: "Hose Clamps", hasSizes: false },
-  { id: 14, name: "Worm Drive Clamps", hasSizes: true },
-  { id: 15, name: "All Agriculture Pump Clamps", hasSizes: false },
-  { id: 16, name: "Niko Clamps", hasSizes: false },
-  { id: 17, name: "CPVC Clamps", hasSizes: false },
-  { id: 18, name: "Nail Clamps", hasSizes: true },
-  { id: 19, name: "Agriculture Pump Foot Valves CI", hasSizes: false },
-  { id: 20, name: "Ball Model A/T N.R. Valves", hasSizes: true },
+  { id: 1, name: "Thunder Hose Pipe", hasSizes: true, image: "/thunder_hose_pipe.png" },
+  { id: 2, name: "Canvas Hose Pipes", hasSizes: false, image: "/canvas_hose_pipe.png" },
+  { id: 3, name: "Section Pipes", hasSizes: true, image: "/section-pipe.png" },
+  { id: 4, name: "Butyl Water Proofing Tapes for ceiling(SHED) repairs", hasSizes: true, image: "/butyl-waterproofing-tape.png" },
+  { id: 5, name: "Tractor Pumps", hasSizes: false, image: "/tractor-pump.png" },
+  { id: 6, name: "Water Circulation Pumps", hasSizes: false, image: "/water-circulation-pump.png" },
+  { id: 7, name: "Rubber Flange Washers", hasSizes: false, image: "/rubber-flange-washer.png" },
+  { id: 8, name: "Square CI Flanges", hasSizes: false, image: "/square-ci-flange.png" },
+  { id: 9, name: "Round CI Flanges", hasSizes: true, image: "/round-ci-flange.png" },
+  { id: 10, name: "Bends", hasSizes: true, image: "/bend.png" },
+  { id: 11, name: "Grove Bends", hasSizes: false, image: "/grove-bend.png" },
+  { id: 12, name: "CI Hose Collars", hasSizes: true, image: "/ci-hose-collar.png" },
+  { id: 14, name: "Hose Clamps", hasSizes: false, image: "/hose-clamp.png" },
+  { id: 15, name: "Worm Drive Clamps", hasSizes: true, image: "/worm-drive-clamp.png" },
+  { id: 16, name: "All Agriculture Pipe Clamps", hasSizes: false, image: "/all-agriculture-pipe-clamp.png" },
+  { id: 17, name: "Niko Clamps", hasSizes: false, image: "/niko-clamp.png" },
+  { id: 18, name: "CPVC Clamps", hasSizes: false, image: "/cpvc-clamp.png" },
+  { id: 19, name: "Nail Clamps", hasSizes: true, image: "/nail-clamp.png" },
+  { id: 20, name: "Agriculture Pump Foot Valves CI", hasSizes: false, image: "/agriculture-pump-foot-valve-ci.png" },
+  { id: 21, name: "Ball Model A/T N.R. Valves", hasSizes: true, image: "/Ball-Model-A.T-N.R-Valves-1.png" }
 ];
 
 const ProductSizes = () => {
+  const { addToCart } = useCart();
+
   const { id } = useParams(); // Gets the ID of the clicked product
   const navigate = useNavigate();
 
@@ -44,14 +47,32 @@ const ProductSizes = () => {
 
   const [quantity, setQuantity] = useState(1); // Default to 1
   const [isAdded, setIsAdded] = useState(false);
-
-  const handleAddToCart = () => {
-      setIsAdded(true);
-      setTimeout(() => setIsAdded(false), 3000); // Reset button after 3 seconds
-  };
+  const [selectedSize, setSelectedSize] = useState(null); 
 
   const product = items.find((item) => item.id === parseInt(id));
 
+
+  const handleAddToCart = () => {
+    // If the product has sizes but none is selected, stop the user
+    if (product.hasSizes && !selectedSize) {
+        alert("Please select a size first!");
+        return;
+    }
+
+    // This creates the object that CartPage.jsx expects
+    const itemToAdd = {
+        name: product.name,
+        image: product.image,
+        size: selectedSize || "Standard", // Default to 'Standard' if no size exists
+        qty: quantity,
+        id: product.id + (selectedSize || "") // Unique ID for cart management
+    };
+
+    addToCart(itemToAdd); 
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 3000);
+};
+  
   if (loading) {
     return <Loader />;
   }
@@ -87,11 +108,16 @@ const ProductSizes = () => {
           }}>
 
             {sizeVariations.map((variant) => (
-              <div key={variant.sizeId} style={{ 
-                border: '1px solid #ddd', 
+              <div key={variant.sizeId} 
+              onClick={() => setSelectedSize(variant.label)} // Set the size on click
+              style={{ 
+                border: selectedSize === variant.label ? '2px solid #007bff' : '1px solid #ddd', // Blue border if selected 
                 borderRadius: '8px', 
                 padding: '10px',
-                width: '180px'
+                width: '180px',
+                cursor: 'pointer',
+                backgroundColor: selectedSize === variant.label ? '#f0f7ff' : 'white', // Light blue background if selected
+                transition: '0.2s all ease-in-out'
               }}>
                 <img 
                   src={variant.img} 

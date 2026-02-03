@@ -1,15 +1,25 @@
-import "./loader.css";
+import React from 'react';
+import './loader.css'; // We will add a simple pulse animation here
 
-function Loader() {
+const Loader = () => {
   return (
-    // <div className="loader-overlay">
-    //   <div className="spinner"></div>
-    //   <p>Loading...</p>
-    // </div>
-    <div className="loader-container">
-      <img src="/MB-logo.png" alt="Loading..." className="loader-icon" />
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '80vh'
+    }}>
+      {/* Your Logo appearing as a Loader */}
+      <img 
+        src="/MB-logo.png" 
+        alt="Loading..." 
+        className="loader-logo"
+        style={{ width: '100px', marginBottom: '20px' }} 
+      />
+      <p style={{ fontWeight: 'bold', color: '#555' }}>Loading...</p>
     </div>
   );
-}
+};
 
 export default Loader;

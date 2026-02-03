@@ -1,0 +1,39 @@
+.about-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem; /* Laptop padding */
+  text-align: center;
+}
+
+.about-card {
+  padding: 2.5rem; /* Slightly more padding for a premium look */
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  line-height: 1.6; /* Improves readability */
+}
+
+.about-card h2 {
+  color: blue; /* Match your navbar theme */
+  margin-bottom: 1.5rem;
+}
+
+/* --- MOBILE ADJUSTMENTS --- */
+@media (max-width: 600px) {
+  .about-container {
+    padding: 1rem; /* Less margin on the sides of the screen */
+  }
+
+  .about-card {
+    padding: 1.5rem; /* Less padding inside the card to save space */
+  }
+
+  .about-card h2 {
+    font-size: 1.4rem; /* Slightly smaller heading for small screens */
+  }
+
+  .about-card p {
+    font-size: 1rem;
+    text-align: left; /* Text often looks better left-aligned on mobile */
+  }
+}
