@@ -3,8 +3,9 @@ import {Link} from 'react-router-dom'
 import './navbar.css'
 import { FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa'; // Professional trolley icon
 import { useCart } from './cartContext';
+import { FaHome, FaInfoCircle, FaPhoneAlt} from 'react-icons/fa';
 
-function Navbar({ showSearchBar,searchTerm, onSearchChange }){
+function Navbar({ showSearchBar,searchTerm, onSearchChange, favorites }){
     const { cart } = useCart(); // Extract cart from context
     
     const [isOpen, setIsOpen] = useState(false); // State to track menu toggle
@@ -40,18 +41,31 @@ function Navbar({ showSearchBar,searchTerm, onSearchChange }){
             </div>
 
         <div className={`nav-links ${isOpen ? "active" : ""}`}>
-            <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-            <Link to="/about" onClick={() => setIsOpen(false)}>About</Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)}>Contact</Link>
+            <Link to="/" onClick={() => setIsOpen(false)}>
+                <FaHome style={{ marginRight: '10px' }} /> Home
+            </Link>
 
-            <div className="cart-icon-container" title="View Cart">
-                <Link to="/cart" onClick={() => setIsOpen(false)} style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <FaShoppingCart size={22} color="white" />
-                    {cart.length > 0 && (
-                    <span className="cart-badge">{cart.length}</span>
-                    )}
-                </Link>
-            </div>
+            <Link to="/about" onClick={() => setIsOpen(false)}>
+                <FaInfoCircle style={{ marginRight: '10px' }} /> About
+            </Link>
+
+            <Link to="/contact" onClick={() => setIsOpen(false)}>
+                <FaPhoneAlt style={{ marginRight: '10px' }} /> Contact
+            </Link>
+
+            <Link to="/favorites" className="menu-item" onClick={() => setIsOpen(false)}>
+                <span style={{ marginRight: '10px' }}>❤️</span>
+                Favorites {favorites && favorites.length > 0 && `(${favorites.length})`}
+            </Link>
+
+            {/* Cart Link with Icon and Badge */}
+            <Link to="/cart" onClick={() => setIsOpen(false)} style={{ position: 'relative' }}>
+                <FaShoppingCart style={{ marginRight: '10px' }} /> 
+                Cart
+                {cart.length > 0 && (
+                <span className="cart-badge">{cart.length}</span>
+                )}
+            </Link>
         </div>
             
         </nav>

@@ -1,39 +1,48 @@
 .about-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem; /* Laptop padding */
+  /* 100px top padding ensures it clears the 60px blue navbar */
+  padding: 100px 2rem 2rem 2rem; 
   text-align: center;
+  min-height: 100vh;
 }
 
 .about-card {
-  padding: 2.5rem; /* Slightly more padding for a premium look */
-  background: #fff;
+  padding: 2.5rem;
+  background: #ffffff;
+  color: #333333; /* FORCES TEXT TO BE DARK GREY */
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  line-height: 1.6; /* Improves readability */
+  line-height: 1.6;
 }
 
 .about-card h2 {
-  color: blue; /* Match your navbar theme */
+  color: blue; 
   margin-bottom: 1.5rem;
+}
+
+/* Fix for italics and bold text inside the card */
+.about-card p, .about-card i, .about-card b {
+  color: #333333; 
 }
 
 /* --- MOBILE ADJUSTMENTS --- */
 @media (max-width: 600px) {
   .about-container {
-    padding: 1rem; /* Less margin on the sides of the screen */
+    /* 80px top padding for mobile to clear the navbar */
+    padding: 80px 1rem 2rem 1rem; 
   }
 
   .about-card {
-    padding: 1.5rem; /* Less padding inside the card to save space */
+    padding: 1.5rem;
   }
 
   .about-card h2 {
-    font-size: 1.4rem; /* Slightly smaller heading for small screens */
+    font-size: 1.4rem;
   }
 
   .about-card p {
     font-size: 1rem;
-    text-align: left; /* Text often looks better left-aligned on mobile */
+    text-align: left;
   }
 }

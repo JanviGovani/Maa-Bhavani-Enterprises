@@ -26,7 +26,15 @@ const items = [
   { id: 21, name: "Ball Model A/T N.R. Valves", hasSizes: true, image: "/Ball-Model-A.T-N.R-Valves-1.png" }
 ];
 
-function Home({ searchTerm }) {
+const slideImages = [
+  "/thunder_hose_pipe.png",
+  "/canvas_hose_pipe.png",
+  "/section-pipe.png",
+  "/tractor-pump.png",
+  "/agriculture-pump-foot-valve-ci.png"
+];
+
+function Home({ searchTerm, favorites, toggleFavorite }) {
   const [loading, setLoading] = useState(true);
   const [highlightedId, setHighlightedId] = useState(null);
   const navigate = useNavigate();
@@ -68,6 +76,15 @@ function Home({ searchTerm }) {
     }
   }, [searchTerm]);
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const slideTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === slideImages.length - 1 ? 0 : prev + 1));
+    }, 4000); // Changes every 4 seconds
+    return () => clearInterval(slideTimer);
+  }, []);
+
   const handleItemClick = (item) => {
       navigate(`/product/${item.id}`); 
   };
@@ -75,43 +92,66 @@ function Home({ searchTerm }) {
   if (loading) return <Loader />;
 
   return (
-    <div className="app-content">
-      <h2 className="home-title">Welcome to Maa Bhavani Enterprises!</h2>
-      {/* Container class handles the grid (2 on mobile, 4 on laptop) */}
-      <div className="items-container" 
-      // style={{ 
-      //   display: "flex", 
-      //   flexWrap: "wrap", 
-      //   justifyContent: "center", 
-      //   gap: "20px", 
-      //   padding: "1rem" 
-      // }}
-      >
-        {items.map(item => (
+  <div className="app-content">
+    {/* 1. The Slider Section (Placed at the very top of content) */}
+    <div className="hero-slider">
+      {slideImages.map((img, index) => {
+        let position = "nextSlide";
+        if (index === currentSlide) {
+          position = "activeSlide";
+        }
+        if (
+          index === currentSlide - 1 ||
+          (currentSlide === 0 && index === slideImages.length - 1)
+        ) {
+          position = "lastSlide";
+        }
+
+        return (
           <div
-            key={item.id}
-            id={`product-${item.id}`}
-            onClick={() => handleItemClick(item)}
-            className={`item-card ${highlightedId === item.id ? 'highlight' : ''}`}
-            style={{
-              /* We only keep the orange border here because it depends on React state */
-              border: highlightedId === item.id ? '3px solid orange' : '1px solid #ccc',
-              boxShadow: highlightedId === item.id ? '0 0 15px rgba(255, 165, 0, 0.5)' : 'none'
-            }}
-          >
-            <img 
-              src={item.image} 
-              alt={item.name} 
-              // style={{ width: "100%", height: "150px", objectFit: "contain" }} 
-              className="item-image"
-            />
-            {/* <h3 style={{ fontSize: '1.1rem', marginTop: '10px' }}>{item.name}</h3> */}
-            <h3 className="item-name">{item.name}</h3>
+            key={index}
+            className={`slide ${position}`}
+            style={{ backgroundImage: `url(${img})` }}
+          />
+        );
+      })}
+    <div className="hero-overlay">
+    <h2 className="home-title">Welcome to Maa Bhavani Enterprises!</h2>
+  </div>
+</div>
+
+    {/* 2. Your Existing Grid Section (Starts immediately after the slider) */}
+    <div className="items-container">
+      {items.map(item => (
+        <div
+          key={item.id}
+          id={`product-${item.id}`}
+          onClick={() => handleItemClick(item)}
+          className={`item-card ${highlightedId === item.id ? 'highlight' : ''}`}
+          style={{
+            border: highlightedId === item.id ? '3px solid orange' : '1px solid #ccc',
+            boxShadow: highlightedId === item.id ? '0 0 15px rgba(255, 165, 0, 0.5)' : 'none'
+          }}
+        >
+          <div className="favorite-icon" onClick={(e) => {
+            e.stopPropagation(); // Prevents clicking the heart from opening the product page
+            toggleFavorite(item);
+          }}>
+            <span style={{ color: favorites.some(fav => fav.id === item.id) ? 'red' : 'gray' }}>
+              {favorites.some(fav => fav.id === item.id) ? '❤️' : '🤍'}
+            </span>
           </div>
-        ))}
-      </div>
+          <img 
+            src={item.image} 
+            alt={item.name} 
+            className="item-image"
+          />
+          <h3 className="item-name">{item.name}</h3>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
 }
 
 export default Home;

@@ -69,33 +69,55 @@
 /* --- MOBILE STYLES (Switches automatically) --- */
 @media (max-width: 768px) {
     .menu-icon {
-        display: block; /* Show hamburger */
+        display: block;
     }
 
     .nav-links {
         position: fixed;
-        right: -100%;    /* Hidden off-screen */
-        top: 0;          /* Full height */
+        right: -100%;
+        top: 0;
         flex-direction: column;
-        background-color: blue; /* Match navbar */
+        background-color: blue; 
         width: 250px;
         height: 100vh;
         transition: 0.3s ease-in-out;
-        padding-top: 80px; /* Space for the logo */
-        padding-left: 20px;
-        align-items: flex-start;
+        padding: 80px 20px 20px 20px; /* Adjusted padding */
+        align-items: center; /* Center the buttons */
+        gap: 15px; 
         box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        box-sizing: border-box;
     }
 
     .nav-links.active {
-        right: 0; /* Slide in */
+        right: 0;
+    }
+
+    /* THE NEW BUTTON STYLES GO HERE */
+    .nav-links a {
+        background-color: #333333; /* Dark grey box */
+        color: white !important;
+        padding: 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        align-items: center;   /* Vertical centering */
+        justify-content: center; /* Horizontal centering */
+        position: relative;     /* Crucial for the red badge to stay pinned to the icon */
+    }
+
+    .nav-links a:hover {
+        background-color: #444444;
     }
 
     .search-container {
-        flex: 2; /* Gives search more room on phone */
+        flex: 2;
     }
 
     .search-input {
-        max-width: 150px; /* Smaller search on phone to fit beside logo */
+        max-width: 150px;
     }
 }
