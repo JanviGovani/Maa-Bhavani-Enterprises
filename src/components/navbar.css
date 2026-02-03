@@ -1,42 +1,32 @@
 .navbar {
-    width: 100%;
-    height: 60px; 
-    background-color: blue;
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 1000;
     display: flex;
-    align-items: center;   
+    align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 10px 20px;
+    background-color: blue; /* Kept your blue color */
+    position: sticky;       /* Kept it sticky at the top */
+    top: 0;
+    z-index: 1000;
+    height: 60px;
     box-sizing: border-box;
 }
 
-.navbar-left {
-    flex: 1; 
-    display: flex;
-    align-items: center;
+.nav-logo {
+    height: 40px;
+    width: auto;
+    display: block;
 }
 
-.search-container {
-    flex: 2;
-    display: flex;
-    justify-content: center;
-}
-
-.search-input {
-    padding: 8px;
-    width: 300px;
-    border-radius: 4px;
-    border: none;
-    font-size: 14px;
+/* Hide Hamburger on Laptop */
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    z-index: 1001;
 }
 
 .nav-links {
-    flex: 1;
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
     gap: 20px;
 }
 
@@ -44,16 +34,68 @@
     color: white !important;
     text-decoration: none;
     font-weight: 500;
-    white-space: nowrap; /* Essential: prevents text from splitting */
 }
 
-.nav-links a:hover {
-    color: lightgray !important;
+/* Search Bar Laptop Styles */
+.search-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 15px;
 }
 
-.nav-logo{
-    height: 40px; /* Adjust this height to fit your navbar */
-    width: auto;
-    display: block;
-    object-fit: contain; /* Prevents stretching */
+.search-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    font-size: 16px; /* 16px prevents mobile auto-zoom */
+}
+
+/* Cart Badge Styling */
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+/* --- MOBILE STYLES (Switches automatically) --- */
+@media (max-width: 768px) {
+    .menu-icon {
+        display: block; /* Show hamburger */
+    }
+
+    .nav-links {
+        position: fixed;
+        right: -100%;    /* Hidden off-screen */
+        top: 0;          /* Full height */
+        flex-direction: column;
+        background-color: blue; /* Match navbar */
+        width: 250px;
+        height: 100vh;
+        transition: 0.3s ease-in-out;
+        padding-top: 80px; /* Space for the logo */
+        padding-left: 20px;
+        align-items: flex-start;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    }
+
+    .nav-links.active {
+        right: 0; /* Slide in */
+    }
+
+    .search-container {
+        flex: 2; /* Gives search more room on phone */
+    }
+
+    .search-input {
+        max-width: 150px; /* Smaller search on phone to fit beside logo */
+    }
 }

@@ -1,0 +1,91 @@
+.contact-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.contact-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.contact-numbers {
+  list-style: none;
+  padding: 0;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.contact-numbers li {
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+/* Form layout - Optimized for Laptop */
+.feedback-form {
+  display: grid;
+  grid-template-columns: 150px 1fr; /* Side-by-side on big screens */
+  gap: 15px;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+  box-shadow: 3px 3px 10px rgba(173, 216, 230, 0.5);
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.submit-btn {
+  grid-column: 2; /* Keeps button under the input on laptop */
+  color: white;
+  background-color: #28a745;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+  .contact-container {
+    padding: 1rem;
+  }
+
+  .contact-card {
+    padding: 1.5rem;
+  }
+
+  .feedback-form {
+    /* Switch to 1 column: Labels on top of inputs */
+    grid-template-columns: 1fr; 
+    gap: 10px;
+  }
+
+  .submit-btn {
+    grid-column: 1; /* Moves button to full width on mobile */
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .contact-numbers {
+    font-size: 1rem;
+  }
+}

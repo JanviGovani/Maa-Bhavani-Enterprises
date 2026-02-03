@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import './Home.css'
-import Loader from './components/loader';   // 👈 ADDED
+import Loader from '../components/loader';   // 👈 ADDED
 import { useNavigate } from 'react-router-dom';
+import { CartProvider } from '../components/cartContext';
 
 const items = [
   { id: 1, name: "Thunder Hose Pipe", hasSizes:true, image: "/thunder_hose_pipe.png" },

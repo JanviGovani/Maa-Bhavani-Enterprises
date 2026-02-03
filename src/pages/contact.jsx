@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Loader from "./loader";
+import Loader from "../components/loader";
 import "./contact.css";
 
 function Contact() {
@@ -28,9 +28,9 @@ function Contact() {
         <b>Contact number</b>
 
         <ul className="contact-numbers">
-          <li>9652108320</li>
-          <li>9652192736</li>
-          <li>9949273082</li>
+          <li><a href="tel:9652108320" style={{ textDecoration: 'none', color: 'inherit' }}>9652108320</a></li>
+          <li><a href="tel:9652192736" style={{ textDecoration: 'none', color: 'inherit' }}>9652192736</a></li>
+          <li><a href="tel:9949273082" style={{ textDecoration: 'none', color: 'inherit' }}>9949273082</a></li>
         </ul>
 
         <h3>Feedback</h3>
