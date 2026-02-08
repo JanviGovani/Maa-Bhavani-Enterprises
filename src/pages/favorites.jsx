@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const Favorites = ({ favorites }) => {
+const Favorites = ({ favorites , removeFromFavorites}) => {
   const navigate = useNavigate();
 
   return (
@@ -30,6 +30,16 @@ const Favorites = ({ favorites }) => {
             >
               <img src={item.image} alt={item.name} className="item-image" />
               <h3 className="item-name">{item.name}</h3>
+              {/*Remove Button */}
+              <button 
+                className="remove-btn"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevents navigating to product page
+                  removeFromFavorites(item.id);
+                }}
+              >
+                Remove
+              </button>
             </div>
           ))
         )}

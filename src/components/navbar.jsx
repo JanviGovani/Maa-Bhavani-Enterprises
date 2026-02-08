@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Link} from 'react-router-dom'
 import './navbar.css'
-import { FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa'; // Professional trolley icon
+import { FaShoppingCart, FaBars, FaTimes , FaClipboardList} from 'react-icons/fa'; // Professional trolley icon
 import { useCart } from './cartContext';
 import { FaHome, FaInfoCircle, FaPhoneAlt} from 'react-icons/fa';
 
@@ -56,6 +56,10 @@ function Navbar({ showSearchBar,searchTerm, onSearchChange, favorites }){
             <Link to="/favorites" className="menu-item" onClick={() => setIsOpen(false)}>
                 <span style={{ marginRight: '10px' }}>❤️</span>
                 Favorites {favorites && favorites.length > 0 && `(${favorites.length})`}
+            </Link>
+
+            <Link to="/order-history" onClick={() => setIsOpen(false)}>
+                <FaClipboardList style={{ marginRight: '10px' }} /> Orders
             </Link>
 
             {/* Cart Link with Icon and Badge */}
