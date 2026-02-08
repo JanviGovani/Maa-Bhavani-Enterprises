@@ -44,6 +44,9 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
+  background-color: white !important; /* Force background to white */
+  color: black !important;            /* Force text to black */
+  box-sizing: border-box; /* Prevents input from overflowing on mobile */
 }
 
 .submit-btn {
@@ -87,5 +90,14 @@
   
   .contact-numbers {
     font-size: 1rem;
+  }
+}
+
+/* Fix for mobile specific overrides */
+@media (max-width: 600px) {
+  .feedback-form input,
+  .feedback-form textarea {
+    background-color: white !important;
+    color: black !important;
   }
 }
