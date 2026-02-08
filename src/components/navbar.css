@@ -1,10 +1,11 @@
+/* --- NAVIGATION BAR BASE --- */
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background-color: blue; /* Kept your blue color */
-    position: sticky;       /* Kept it sticky at the top */
+    background-color: blue; /* Your brand blue */
+    position: sticky;
     top: 0;
     z-index: 1000;
     height: 60px;
@@ -17,26 +18,7 @@
     display: block;
 }
 
-/* Hide Hamburger on Laptop */
-.menu-icon {
-    display: none;
-    cursor: pointer;
-    z-index: 1001;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-links a {
-    color: white !important;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-/* Search Bar Laptop Styles */
+/* --- SEARCH BAR (Standard/Global Look) --- */
 .search-container {
     flex: 1;
     display: flex;
@@ -49,11 +31,36 @@
     max-width: 300px;
     padding: 8px;
     border-radius: 4px;
-    border: none;
-    font-size: 16px; /* 16px prevents mobile auto-zoom */
+    border: 1px solid #ccc;    /* Visible border */
+    background-color: white !important; /* Always white */
+    color: black !important;           /* Always black text */
+    font-size: 16px;
 }
 
-/* Cart Badge Styling */
+/* --- NAVIGATION LINKS (Laptop/Desktop) --- */
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* These are simple white text links for the laptop view */
+.nav-links a {
+    color: white !important;
+    text-decoration: none;
+    font-weight: 500;
+    background-color: transparent; 
+    padding: 0;
+    box-shadow: none;
+}
+
+/* --- CART BADGE --- */
 .cart-badge {
     position: absolute;
     top: -8px;
@@ -66,36 +73,58 @@
     font-weight: bold;
 }
 
-/* --- MOBILE STYLES (Switches automatically) --- */
+/* --- MOBILE STYLES (Max-width: 768px) --- */
 @media (max-width: 768px) {
     .menu-icon {
-        display: block; /* Show hamburger */
+        display: block;
     }
 
     .nav-links {
         position: fixed;
-        right: -100%;    /* Hidden off-screen */
-        top: 0;          /* Full height */
+        right: -100%;
+        top: 0;
         flex-direction: column;
-        background-color: blue; /* Match navbar */
+        background-color: blue; /* Fixed: Changed from white to blue to match your theme */
         width: 250px;
         height: 100vh;
         transition: 0.3s ease-in-out;
-        padding-top: 80px; /* Space for the logo */
-        padding-left: 20px;
-        align-items: flex-start;
+        padding: 80px 20px 20px 20px;
+        align-items: center;
+        gap: 15px;
         box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        box-sizing: border-box;
     }
 
     .nav-links.active {
-        right: 0; /* Slide in */
+        right: 0;
+    }
+
+    /* THE DARK GREY BUTTONS: Only active when the mobile menu is open */
+    .nav-links.active a {
+        background-color: #333333; /* Dark grey box only for mobile menu links */
+        color: white !important;
+        padding: 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .nav-links.active a:hover {
+        background-color: #444444;
     }
 
     .search-container {
-        flex: 2; /* Gives search more room on phone */
+        flex: 2;
     }
 
     .search-input {
-        max-width: 150px; /* Smaller search on phone to fit beside logo */
+        max-width: 150px;
     }
 }

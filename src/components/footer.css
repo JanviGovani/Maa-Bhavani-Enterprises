@@ -7,4 +7,20 @@
     color: white;
     text-align: center;
     padding: 10px;
+
+    display: flex;
+    flex-direction: column; /* Stacks name and rights on small screens */
+    align-items: center;
+    font-size: 14px; /* Slightly smaller for mobile safety */
+    box-sizing: border-box; /* Ensures padding doesn't push it off screen */
+    z-index: 1000; /* This forces the footer to the front */
+}
+
+/* For larger screens (Laptops) */
+@media (min-width: 600px) {
+    .footer {
+        flex-direction: row; /* Puts them side-by-side on laptops */
+        justify-content: center;
+        gap: 5px;
+    }
 }
