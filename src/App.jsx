@@ -1,3 +1,7 @@
+import { db } from './firebase'; 
+import { collection, addDoc } from 'firebase/firestore';
+import Admin from './pages/admin';
+
 import React, { useState, useEffect} from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './components/cartContext';
@@ -65,6 +69,20 @@ function App() {
     );
   };
 
+  const sendTestOrder = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "orders"), {
+        customer: "Test User",
+        item: "Pizza",
+        price: 500,
+        timestamp: new Date()
+      });
+      alert("Success! Order ID: " + docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
+
   return (
     <CartProvider>
       <Router>
@@ -74,6 +92,7 @@ function App() {
           onSearchChange={handleSearchChange} 
           favorites={favorites} // Passing it here
         />
+  
         <Routes>
           <Route path="/" element={
             <Home 
@@ -91,12 +110,13 @@ function App() {
           <Route path="/cart" element={
             <CartPage addOrder={addOrder}/>
             } />
-            <Route path="/order-history" element={
-              <OrderHistory 
-                orderHistory={orderHistory} 
-                updateOrderStatus={updateOrderStatus} 
-              />
-            } />
+          <Route path="/order-history" element={
+            <OrderHistory 
+              orderHistory={orderHistory} 
+              updateOrderStatus={updateOrderStatus} 
+            />
+          } />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
         <Footer />
       </Router>

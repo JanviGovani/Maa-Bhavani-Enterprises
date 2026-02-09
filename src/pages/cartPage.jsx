@@ -1,3 +1,6 @@
+import { db } from '../firebase'; 
+import { collection, addDoc } from 'firebase/firestore';
+
 import React from 'react';
 import { useCart } from '../components/cartContext'; 
 import { useNavigate } from 'react-router-dom';
@@ -8,22 +11,36 @@ function CartPage({ addOrder }) {
   const { cart, setCart, removeFromCart } = useCart(); // Add setCart here
   const navigate = useNavigate();
 
-  const handlePlaceOrder = () => {
-  if (cart.length === 0) return;
+  const handlePlaceOrder = async () => {
+    if (cart.length === 0) return;
 
-  const newOrder = {
-    id: Math.floor(100000 + Math.random() * 900000).toString(),
-    time: new Date().toLocaleString(),
-    totalItems: cart.length,
-    totalQuantity: cart.length, // Or use a sum if you have quantity per item
-    status: "Pending", 
-    items: [...cart]   
+    // 1. Prepare the order data
+    const newOrder = {
+      time: new Date().toLocaleString(),
+      totalItems: cart.length,
+      status: "Pending",
+      items: cart,
+      total: typeof totalAmount !== 'undefined' ? totalAmount : 0, // Ensure total is sent
+      timestamp: new Date() // Firestore likes this for sorting
+    };
+
+    try {
+      // 2. Save to Firebase (Cloud)
+      const docRef = await addDoc(collection(db, "orders"), newOrder);
+
+      // 3. Update Local State (So it shows in your Order History page immediately)
+      addOrder({ ...newOrder, id: docRef.id });
+
+      // 4. Cleanup and Move
+      alert("Order Placed Successfully!");
+      setCart([]); // or clearCart() if that's your function name
+      navigate('/order-history');
+      
+    } catch (e) {
+      alert("Error saving order. Please try again.");
+      console.error("Firebase Error: ", e);
+    }
   };
-
-  addOrder(newOrder); // Calls the function in App.jsx
-  setCart([]);        // Clears the context and LocalStorage automatically
-  navigate('/order-history');
-};
 
   return (
     <div className="cart-container">
