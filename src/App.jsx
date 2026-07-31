@@ -12,6 +12,23 @@ import Favorites from './pages/favorites';
 import OrderHistory from './pages/orderHistory';
 import Admin from './pages/admin';
 
+// Helper component to handle PWA standalone redirect to admin
+function AdminRedirect() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    
+    // If opened as an installed app on your device and sitting at the root, jump to admin
+    if (isStandalone && (location.pathname === '/' || location.pathname === '')) {
+      navigate('/admin');
+    }
+  }, [navigate, location]);
+
+  return null;
+}
+
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   
