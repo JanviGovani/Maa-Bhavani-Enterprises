@@ -1,8 +1,4 @@
-import { db } from './firebase'; 
-import { collection, addDoc } from 'firebase/firestore';
-import Admin from './pages/admin';
-
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './components/cartContext';
 import Navbar from './components/navbar';
@@ -14,10 +10,12 @@ import ProductSizes from './pages/productSizes';
 import CartPage from './pages/cartPage';
 import Favorites from './pages/favorites'; 
 import OrderHistory from './pages/orderHistory';
+import Admin from './pages/admin';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
-  // FIX: Added the missing favorites state
+  
+  // Favorites State (kept as is)
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("my-favorites");
     return saved ? JSON.parse(saved) : [];
@@ -25,13 +23,12 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem("my-favorites", JSON.stringify(favorites));
-  }, [favorites]); // This runs every time the 'favorites' array changes
+  }, [favorites]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // FIX: Added the logic to add/remove favorites
   const toggleFavorite = (item) => {
     setFavorites((prev) =>
       prev.some((fav) => fav.id === item.id)
@@ -44,45 +41,6 @@ function App() {
     setFavorites(prev => prev.filter(item => item.id !== id));
   };
 
-  // Order History State
-  const [orderHistory, setOrderHistory] = useState(() => {
-    const savedOrders = localStorage.getItem("order-history");
-    return savedOrders ? JSON.parse(savedOrders) : [];
-  });
-
-  // Sync orders to LocalStorage
-  useEffect(() => {
-    localStorage.setItem("order-history", JSON.stringify(orderHistory));
-  }, [orderHistory]);
-
-  // Function to add a new order (Called from CartPage)
-  const addOrder = (newOrder) => {
-    setOrderHistory(prev => [newOrder, ...prev]); // Most recent order at the top
-  };
-
-  // Function to update status (Admin or User click)
-  const updateOrderStatus = (orderId, newStatus) => {
-    setOrderHistory(prev => 
-      prev.map(order => 
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-  };
-
-  const sendTestOrder = async () => {
-    try {
-      const docRef = await addDoc(collection(db, "orders"), {
-        customer: "Test User",
-        item: "Pizza",
-        price: 500,
-        timestamp: new Date()
-      });
-      alert("Success! Order ID: " + docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-  };
-
   return (
     <CartProvider>
       <Router>
@@ -90,9 +48,9 @@ function App() {
           showSearchBar={true} 
           searchTerm={searchTerm} 
           onSearchChange={handleSearchChange} 
-          favorites={favorites} // Passing it here
+          favorites={favorites} 
         />
-  
+ 
         <Routes>
           <Route path="/" element={
             <Home 
@@ -107,15 +65,8 @@ function App() {
           <Route path="/favorites" 
           element={<Favorites favorites={favorites}
           removeFromFavorites={removeFromFavorites}/>} />
-          <Route path="/cart" element={
-            <CartPage addOrder={addOrder}/>
-            } />
-          <Route path="/order-history" element={
-            <OrderHistory 
-              orderHistory={orderHistory} 
-              updateOrderStatus={updateOrderStatus} 
-            />
-          } />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
         <Footer />

@@ -1,5 +1,5 @@
 import { db } from '../firebase'; 
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp} from 'firebase/firestore';
 
 import React from 'react';
 import { useCart } from '../components/cartContext'; 
@@ -14,26 +14,33 @@ function CartPage({ addOrder }) {
   const handlePlaceOrder = async () => {
     if (cart.length === 0) return;
 
+    // Calculate total price dynamically from the cart items
+    const calculatedTotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+
     // 1. Prepare the order data
+    // 1. Prepare the order data with explicit quantity mapping
     const newOrder = {
       time: new Date().toLocaleString(),
-      totalItems: cart.length,
+      totalItems: cart.reduce((sum, item) => sum + (item.quantity || 1), 0),
       status: "Pending",
-      items: cart,
-      total: typeof totalAmount !== 'undefined' ? totalAmount : 0, // Ensure total is sent
-      timestamp: new Date() // Firestore likes this for sorting
+      items: cart.map(item => ({
+        name: item.name || "Unknown",
+        price: item.price || 0,
+        size: item.size ?? null,
+        image: item.image ?? null,
+        quantity: item.quantity || 1  // Explicitly saving quantity here
+      })),
+      total: calculatedTotal, 
+      timestamp: serverTimestamp()
     };
 
     try {
       // 2. Save to Firebase (Cloud)
       const docRef = await addDoc(collection(db, "orders"), newOrder);
 
-      // 3. Update Local State (So it shows in your Order History page immediately)
-      addOrder({ ...newOrder, id: docRef.id });
-
-      // 4. Cleanup and Move
+      // 3. Cleanup and Move
       alert("Order Placed Successfully!");
-      setCart([]); // or clearCart() if that's your function name
+      setCart([]); // Clear cart
       navigate('/order-history');
       
     } catch (e) {
@@ -56,6 +63,8 @@ function CartPage({ addOrder }) {
                 <h3>{item.name}</h3>
                 {/* Display size if it exists */}
                 {item.size && <p>Size: {item.size}</p>}
+                {/* Display quantity */}
+                <p>Quantity: {item.quantity || 1}</p>
                 <button onClick={() => removeFromCart(index)}>Remove</button>
               </div>
             </div>

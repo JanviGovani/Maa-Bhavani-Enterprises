@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Loader from "../components/loader";
+import { db } from "../firebase"; // 1. Import db
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; // 2. Import firestore methods
 import "./contact.css";
 
 function Contact() {
@@ -7,14 +9,31 @@ function Contact() {
   const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
 
+  // 3. Add states for feedback inputs
+  const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 300);
   }, []);
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
-  setSubmitted(true);
+  // 4. Update handleSubmit to save into Firestore
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await addDoc(collection(db, "feedbacks"), {
+        name: name,
+        mobile: mobile,
+        message: message,
+        timestamp: serverTimestamp()
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Error saving feedback: ", error);
+      alert("Failed to submit feedback. Please try again.");
+    }
   };
 
 
@@ -50,6 +69,8 @@ function Contact() {
                 pattern="[A-Za-z ]+"
                 title="Only alphabets allowed"
                 placeholder="Type your full-name here"
+                value={name} // <-- Must be bound
+                onChange={(e) => setName(e.target.value)} // <-- Must update state
                 required
             />
 
@@ -59,11 +80,19 @@ function Contact() {
                 pattern="[0-9]{10}"
                 title="Enter a 10-digit mobile number"
                 placeholder="Type your phone number here"
+                value={mobile} // <-- Must be bound
+                onChange={(e) => setMobile(e.target.value)} // <-- Must update state
                 required
             />
 
             <label><b>Message:</b></label>
-            <textarea rows="5" placeholder="Type feedback message here" required />
+            <textarea 
+              rows="5" 
+              placeholder="Type feedback message here" 
+              value={message} // <-- Must be bound
+              onChange={(e) => setMessage(e.target.value)} // <-- Must update state
+              required 
+            />
 
             <div></div>
 

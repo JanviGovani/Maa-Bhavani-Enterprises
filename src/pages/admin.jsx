@@ -5,6 +5,10 @@ import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/fire
 const Admin = () => {
   const [orders, setOrders] = useState([]);
 
+  // 1. Add feedback state
+  const [feedbacks, setFeedbacks] = useState([]);
+
+  // Fetch orders in real-time
   useEffect(() => {
     // 1. Set up a real-time listener
     const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
@@ -17,6 +21,19 @@ const Admin = () => {
     });
 
     return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
+
+  // 2. Fetch feedbacks in real-time (Added as-is)
+  useEffect(() => {
+    const unsubscribeFeedbacks = onSnapshot(collection(db, "feedbacks"), (snapshot) => {
+      const feedbackData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setFeedbacks(feedbackData.sort((a, b) => (b.timestamp?.toMillis?.() || 0) - (a.timestamp?.toMillis?.() || 0)));
+    });
+
+    return () => unsubscribeFeedbacks();
   }, []);
 
   const updateStatus = async (orderId, newStatus) => {
@@ -37,8 +54,9 @@ const Admin = () => {
         <thead>
           <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Order ID</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date & Time</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Items</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Total</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Quantity</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Status</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Actions</th>
           </tr>
@@ -47,10 +65,13 @@ const Admin = () => {
           {orders.map(order => (
             <tr key={order.id}>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.id.slice(0, 5)}...</td>
+              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.time}</td>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                {order.items?.map(item => `${item.name} (x${item.quantity || 1})`).join(', ')}
+                {order.items?.map(item => item.name).join(', ')}
               </td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>₹{order.total}</td>
+              <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                {order.items?.map(item => `${item.quantity || item.qty || 1}`).join(', ')}
+              </td>
               <td style={{ padding: '10px', border: '1px solid #ddd', fontWeight: 'bold' }}>
                 {order.status}
               </td>
@@ -67,6 +88,36 @@ const Admin = () => {
           ))}
         </tbody>
       </table>
+
+      {/* --- FEEDBACK SECTION --- */}
+      <h2 style={{ marginTop: '40px' }}>Customer Feedbacks</h2>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '40px' }}>
+        <thead>
+          <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Customer Name</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Mobile Number</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {feedbacks.length === 0 ? (
+            <tr>
+              <td colSpan="3" style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>
+                No feedback received yet.
+              </td>
+            </tr>
+          ) : (
+            feedbacks.map(fb => (
+              <tr key={fb.id}>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.name}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.mobile}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.message}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+
     </div>
   );
 };

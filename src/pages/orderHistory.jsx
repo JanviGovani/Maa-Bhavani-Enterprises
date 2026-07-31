@@ -1,50 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { db } from '../firebase';
+import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import './orderHistory.css';
 
-const OrderHistory = ({ orderHistory, updateOrderStatus }) => {
+const OrderHistory = () => {
+  const [orders, setOrders] = useState([]);
+
+  // Fetch orders in real-time from Firebase
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
+      const orderData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      // Sort newest first
+      setOrders(orderData.sort((a, b) => b.timestamp?.toMillis?.() - a.timestamp?.toMillis?.() || 0));
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Function for customer to mark order as delivered/received
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const orderRef = doc(db, "orders", orderId);
+      await updateDoc(orderRef, { status: newStatus });
+    } catch (error) {
+      console.error("Error updating status: ", error);
+    }
+  };
+
   return (
     <div className="history-container">
       <h2>Your Orders</h2>
-      {orderHistory.length === 0 ? (
+      {orders.length === 0 ? (
         <p>No orders placed yet.</p>
       ) : (
-        orderHistory.map((order) => (
+        orders.map((order) => (
           <div key={order.id} className="order-card">
             <div className="order-header">
-              <span>Order ID: <strong>#{order.id}</strong></span>
-              <span className={`status-badge ${order.status.toLowerCase().replace(/\s/g, '-')}`}>
+              <span>Order ID: <strong>#{order.id.slice(0, 6)}...</strong></span>
+              <span className={`status-badge ${order.status?.toLowerCase().replace(/\s/g, '-')}`}>
                 {order.status}
               </span>
             </div>
             
             <div className="order-details">
               <p>Placed on: {order.time}</p>
-              <p>Items: {order.totalItems} | Quantity: {order.totalQuantity}</p>
+              <p>Items & Quantities: {order.items?.map(item => `${item.name} (x${item.quantity || 1})`).join(', ')}</p>
             </div>
 
             {/* Status Tracking Bar */}
             <div className="status-track">
               <div className={`step ${order.status !== 'Pending' ? 'active' : ''}`}>Confirmed</div>
-              <div className={`step ${order.status === 'Out for Delivery' || order.status === 'Delivered' ? 'active' : ''}`}>Shipping</div>
-              <div className={`step ${order.status === 'Delivered' ? 'active' : ''}`}>Delivered</div>
+              <div className={`step ${order.status === 'Out for Delivery' || order.status === 'Completed' || order.status === 'Delivered' ? 'active' : ''}`}>Shipping</div>
+              <div className={`step ${order.status === 'Completed' || order.status === 'Delivered' ? 'active' : ''}`}>Delivered</div>
             </div>
 
-            {/* ADMIN ONLY BUTTON: Simulates the shipping process */}
-            {order.status === 'Pending' && (
-              <button 
-                className="admin-ship-btn"
-                onClick={() => updateOrderStatus(order.id, 'Out for Delivery')}
-              >
-                🚚 Dispatch Order (Admin)
-              </button>
-            )}
-
-            {/* Show button ONLY if not delivered yet */}
-            {order.status !== 'Delivered' && (
+            {/* Customer Action: Mark as Received only if not already completed/delivered */}
+            {order.status !== 'Completed' && order.status !== 'Delivered' && (
               <div className="action-area">
                 <button 
                   className="received-btn"
-                  onClick={() => updateOrderStatus(order.id, 'Delivered')}
+                  onClick={() => updateOrderStatus(order.id, 'Completed')}
                 >
                   Mark as Received
                 </button>

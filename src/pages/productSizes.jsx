@@ -64,7 +64,7 @@ const ProductSizes = () => {
         name: product.name,
         image: product.image,
         size: selectedSize || "Standard", // Default to 'Standard' if no size exists
-        qty: quantity,
+        quantity: quantity,
         id: product.id + (selectedSize || "") // Unique ID for cart management
     };
 
