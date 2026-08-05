@@ -11,7 +11,7 @@ import CartPage from './pages/cartPage';
 import Favorites from './pages/favorites'; 
 import OrderHistory from './pages/orderHistory';
 import Admin from './pages/admin';
-import AdminLogin from './pages/AdminLogin';
+import AdminLogin from './pages/adminLogin';
 import { ADMIN_EMAILS } from './adminConfig';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
