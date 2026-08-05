@@ -23,6 +23,7 @@ function CartPage({ addOrder }) {
       time: new Date().toLocaleString(),
       totalItems: cart.reduce((sum, item) => sum + (item.quantity || 1), 0),
       status: "Pending",
+      deviceId: localStorage.getItem("customer-device-id"),
       items: cart.map(item => ({
         name: item.name || "Unknown",
         price: item.price || 0,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
 import './orderHistory.css';
 
 const OrderHistory = () => {
@@ -8,7 +8,17 @@ const OrderHistory = () => {
 
   // Fetch orders in real-time from Firebase
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
+    // Get or create a unique device identifier for this customer
+    let deviceId = localStorage.getItem("customer-device-id");
+    if (!deviceId) {
+      deviceId = 'dev_' + Math.random().toString(36.substring(2, 9));
+      localStorage.setItem("customer-device-id", deviceId);
+    }
+
+    // Query only orders belonging to this specific device ID
+    const q = query(collection(db, "orders"), where("deviceId", "==", deviceId));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const orderData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
