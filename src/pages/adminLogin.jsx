@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "./firebase"; // Adjust the import path to your firebase config file if needed
-import { ADMIN_EMAILS } from "./adminConfig";
+import { auth, googleProvider } from "../firebase"; // Adjust the import path to your firebase config file if needed
+import { ADMIN_EMAILS } from "../adminConfig";
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [error, setError] = useState("");
