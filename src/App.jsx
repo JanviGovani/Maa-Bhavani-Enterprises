@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route,useNavigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './components/cartContext';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
@@ -11,6 +11,32 @@ import CartPage from './pages/cartPage';
 import Favorites from './pages/favorites'; 
 import OrderHistory from './pages/orderHistory';
 import Admin from './pages/admin';
+import AdminLogin from './pages/AdminLogin';
+import { ADMIN_EMAILS } from './pages/adminConfig';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
+
+// 3. Create a Protected Admin Wrapper component
+function ProtectedAdminRoute() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser && ADMIN_EMAILS.includes(currentUser.email)) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading...</p>;
+
+  return user ? <Admin /> : <AdminLogin onLoginSuccess={(u) => setUser(u)} />;
+}
 
 // Helper component to handle PWA standalone redirect to admin
 function AdminRedirect() {
@@ -84,7 +110,7 @@ function App() {
           removeFromFavorites={removeFromFavorites}/>} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={<ProtectedAdminRoute />} />
         </Routes>
         <Footer />
       </Router>

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+// 1. IMPORT signOut from firebase/auth and auth from your firebase config
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const Admin = () => {
   const [orders, setOrders] = useState([]);
@@ -47,9 +50,26 @@ const Admin = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Live Admin Dashboard</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>Live Admin Dashboard</h2>
+        <button 
+          onClick={handleLogout}
+          style={{ padding: '8px 16px', background: '#ff4d4d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Logout
+        </button>
+      </div>
+      
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
