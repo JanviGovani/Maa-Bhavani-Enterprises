@@ -11,7 +11,7 @@ const OrderHistory = () => {
     // Get or create a unique device identifier for this customer
     let deviceId = localStorage.getItem("customer-device-id");
     if (!deviceId) {
-      deviceId = 'dev_' + Math.random().toString(36.substring(2, 9));
+      deviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
       localStorage.setItem("customer-device-id", deviceId);
     }
 
