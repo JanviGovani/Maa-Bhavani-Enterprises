@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route,useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './components/cartContext';
 import UserModal from './components/userModal';
 import Navbar from './components/navbar';
@@ -56,9 +56,9 @@ function AdminRedirect() {
   return null;
 }
 
-function App() {
+function AppContent() {
   const [searchTerm, setSearchTerm] = useState("");
-  const location = useLocation(); // ADD this to check the current route
+  const location = useLocation(); // Check current route
   
   // Favorites State (kept as is)
   const [favorites, setFavorites] = useState(() => {
@@ -91,39 +91,50 @@ function App() {
     setFavorites(prev => prev.filter(item => item.id !== id));
   };
 
-  const isAdminRoute = location.pathname.startsWith('/admin');//check to see if we are currently on the admin page
+  // Check to see if we are currently on the admin page
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
+  return (
+    <>
+      {/* Only show UserModal if NOT on admin route */}
+      {!isAdminRoute && !userProfile && <UserModal onSave={(profile) => setUserProfile(profile)} />}
+        
+      <Navbar 
+        showSearchBar={true} 
+        searchTerm={searchTerm} 
+        onSearchChange={handleSearchChange} 
+        favorites={favorites} 
+      />
+ 
+      <Routes>
+        <Route path="/" element={
+          <Home 
+            searchTerm={searchTerm} 
+            favorites={favorites} 
+            toggleFavorite={toggleFavorite} 
+          />
+        } />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/product/:id" element={<ProductSizes />} />
+        <Route path="/favorites" 
+        element={<Favorites favorites={favorites}
+        removeFromFavorites={removeFromFavorites}/>} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/order-history" element={<OrderHistory />} />
+        <Route path="/admin" element={<ProtectedAdminRoute />} />
+      </Routes>
+      <Footer />
+    </>
+  );
+}
+
+function App() {
   return (
     <CartProvider>
       <Router>
-        {!isAdminRoute && !userProfile && <UserModal onSave={(profile) => setUserProfile(profile)} />}
-
-        <Navbar 
-          showSearchBar={true} 
-          searchTerm={searchTerm} 
-          onSearchChange={handleSearchChange} 
-          favorites={favorites} 
-        />
- 
-        <Routes>
-          <Route path="/" element={
-            <Home 
-              searchTerm={searchTerm} 
-              favorites={favorites} 
-              toggleFavorite={toggleFavorite} 
-            />
-          } />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/product/:id" element={<ProductSizes />} />
-          <Route path="/favorites" 
-          element={<Favorites favorites={favorites}
-          removeFromFavorites={removeFromFavorites}/>} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/admin" element={<ProtectedAdminRoute />} />
-        </Routes>
-        <Footer />
+        <AdminRedirect />
+        <AppContent />
       </Router>
     </CartProvider>
   );
