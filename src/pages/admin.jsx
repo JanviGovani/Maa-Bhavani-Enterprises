@@ -117,12 +117,13 @@ const Admin = () => {
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Customer Name</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Mobile Number</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Message</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date & Time</th>
           </tr>
         </thead>
         <tbody>
           {feedbacks.length === 0 ? (
             <tr>
-              <td colSpan="3" style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>
+              <td colSpan="4" style={{ padding: '10px', textAlign: 'center', border: '1px solid #ddd' }}>
                 No feedback received yet.
               </td>
             </tr>
@@ -132,6 +133,9 @@ const Admin = () => {
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.name}</td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.mobile}</td>
                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>{fb.message}</td>
+                <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                  {fb.time || (fb.timestamp?.toDate ? fb.timestamp.toDate().toLocaleString() : "N/A")}
+                </td>
               </tr>
             ))
           )}

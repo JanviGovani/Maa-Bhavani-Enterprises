@@ -117,6 +117,7 @@ const ProductSizes = () => {
                 width: '180px',
                 cursor: 'pointer',
                 backgroundColor: selectedSize === variant.label ? '#f0f7ff' : 'white', // Light blue background if selected
+                color: '#000000', // Forces text inside the box to stay black on all devices
                 transition: '0.2s all ease-in-out'
               }}>
                 <img 
@@ -124,7 +125,7 @@ const ProductSizes = () => {
                   alt={variant.label} 
                   style={{ width: "100%", borderRadius: "4px" }} 
                 />
-                <h4>{variant.label}</h4>
+                <h4 style={{ color: '#333333', margin: '10px 0 0 0' }}>{variant.label}</h4>
               </div>
             ))}
           </div>

@@ -24,8 +24,16 @@ const items = [
   { id: 18, name: "CPVC Clamps", hasSizes:false, image: "/cpvc-clamp.png" },
   { id: 19, name: "Nail Clamps", hasSizes:true, image: "/nail-clamp.png" },
   { id: 20, name: "Agriculture Pump Foot Valves CI", hasSizes:false, image: "/agriculture-pump-foot-valve-ci.png" },
-  { id: 21, name: "Ball Model A/T N.R. Valves", hasSizes:true, image: "/Ball-Model-A.T-N.R-Valves-1.png" }
-  
+  { id: 21, name: "Ball Model A/T N.R. Valves", hasSizes:true, image: "/Ball-Model-A.T-N.R-Valves-1.png" },
+  { id: 22, name: "Nail Clamps", hasSizes:true, image: "/nail-clamp.png" },
+  { id: 23, name: "ScrewDrivers", hasSizes:false, image: "/ScrewDrivers.jpg" },
+  { id: 24, name: "Hexaframe", hasSizes:false, image: "/HexaFrame.jpg" },
+  { id: 25, name: "Pipe Vice", hasSizes:false, image: "/PipeVice.jpg" },
+  { id: 26, name: "Pipe Wrench", hasSizes:false, image: "/nail-clamp.png" },
+  { id: 27, name: "Spanners- DOE and Ring", hasSizes:false, image: "/spanners.png" },
+  { id: 28, name: "CI Bush", hasSizes:false, image: "/CI-Bush.jpg" },
+  { id: 29, name: "CI Plugs", hasSizes:false, image: "/CI-Plug.jpeg" },
+  { id: 30, name: "HDPE SS Nipples", hasSizes:false, image: "/hdpe-ss-nipple.jpg" }
 ];
 
 function Home({ searchTerm }) {
