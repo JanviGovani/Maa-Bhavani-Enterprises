@@ -58,6 +58,7 @@ function AdminRedirect() {
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation(); // ADD this to check the current route
   
   // Favorites State (kept as is)
   const [favorites, setFavorites] = useState(() => {
@@ -90,11 +91,13 @@ function App() {
     setFavorites(prev => prev.filter(item => item.id !== id));
   };
 
+  const isAdminRoute = location.pathname.startsWith('/admin');//check to see if we are currently on the admin page
+
   return (
     <CartProvider>
       <Router>
-        {!userProfile && <UserModal onSave={(profile) => setUserProfile(profile)} />}
-          
+        {!isAdminRoute && !userProfile && <UserModal onSave={(profile) => setUserProfile(profile)} />}
+
         <Navbar 
           showSearchBar={true} 
           searchTerm={searchTerm} 
