@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background-color: blue; /* Your brand blue */
+    background-color: #6c757d; /* Your brand blue */
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -84,7 +84,7 @@
         right: -100%;
         top: 0;
         flex-direction: column;
-        background-color: #6c757d; /* Fixed: Changed from white to blue to match your theme */
+        background-color: blue; /* Fixed: Changed from white to blue to match your theme */
         width: 250px;
         height: 100vh;
         transition: 0.3s ease-in-out;
