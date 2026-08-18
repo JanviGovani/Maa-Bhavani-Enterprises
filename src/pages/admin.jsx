@@ -74,6 +74,8 @@ const Admin = () => {
         <thead>
           <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Order ID</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Customer Name</th>
+            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Mobile Number</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date & Time</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Items</th>
             <th style={{ padding: '10px', border: '1px solid #ddd' }}>Quantity</th>
@@ -85,6 +87,8 @@ const Admin = () => {
           {orders.map(order => (
             <tr key={order.id}>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.id.slice(0, 5)}...</td>
+              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.customerName || "Guest"}</td>
+              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.customerMobile || "N/A"}</td>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>{order.time}</td>
               <td style={{ padding: '10px', border: '1px solid #ddd' }}>
                 {order.items?.map(item => item.name).join(', ')}

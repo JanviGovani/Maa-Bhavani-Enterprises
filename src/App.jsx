@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route,useNavigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './components/cartContext';
+import UserModal from './components/userModal';
 import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './pages/home';
@@ -64,6 +65,11 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [userProfile, setUserProfile] = useState(() => {
+    const savedUser = localStorage.getItem("user-profile");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
   useEffect(() => {
     localStorage.setItem("my-favorites", JSON.stringify(favorites));
   }, [favorites]);
@@ -87,6 +93,8 @@ function App() {
   return (
     <CartProvider>
       <Router>
+        {!userProfile && <UserModal onSave={(profile) => setUserProfile(profile)} />}
+          
         <Navbar 
           showSearchBar={true} 
           searchTerm={searchTerm} 

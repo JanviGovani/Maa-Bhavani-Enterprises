@@ -17,13 +17,16 @@ function CartPage({ addOrder }) {
     // Calculate total price dynamically from the cart items
     const calculatedTotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
 
-    // 1. Prepare the order data
+    const userProfile = JSON.parse(localStorage.getItem("user-profile")) || {};
+
     // 1. Prepare the order data with explicit quantity mapping
     const newOrder = {
       time: new Date().toLocaleString(),
       totalItems: cart.reduce((sum, item) => sum + (item.quantity || 1), 0),
       status: "Pending",
       deviceId: localStorage.getItem("customer-device-id"),
+      customerName: userProfile.name || "Guest",
+      customerMobile: userProfile.mobile || "N/A",
       items: cart.map(item => ({
         name: item.name || "Unknown",
         price: item.price || 0,
