@@ -84,7 +84,7 @@
         right: -100%;
         top: 0;
         flex-direction: column;
-        background-color: blue; /* Fixed: Changed from white to blue to match your theme */
+        background-color: grey; /* Fixed: Changed from white to blue to match your theme */
         width: 250px;
         height: 100vh;
         transition: 0.3s ease-in-out;
