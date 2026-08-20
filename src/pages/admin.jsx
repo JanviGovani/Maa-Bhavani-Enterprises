@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDocs, collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 // 1. IMPORT signOut from firebase/auth and auth from your firebase config
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -10,6 +10,43 @@ const Admin = () => {
 
   // 1. Add feedback state
   const [feedbacks, setFeedbacks] = useState([]);
+
+  // --- ADD START: State and listener for price requests ---
+  const [priceRequests, setPriceRequests] = useState([]);
+  const [priceInputs, setPriceInputs] = useState({}); // Tracks input values for each item row
+
+  useEffect(() => {
+    const unsubscribeRequests = onSnapshot(collection(db, "priceRequests"), (snapshot) => {
+      const requestsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setPriceRequests(requestsData);
+    });
+    return () => unsubscribeRequests();
+  }, []);
+
+  const handlePriceChange = (requestId, itemIndex, value) => {
+    setPriceInputs(prev => ({
+      ...prev,
+      [`${requestId}-${itemIndex}`]: value
+    }));
+  };
+
+  const handleDisplayPrices = async (request) => {
+    // Map items and attach the individual price entered by the admin
+    const updatedItems = request.items.map((item, idx) => ({
+      ...item,
+      price: Number(priceInputs[`${request.id}-${idx}`]) || 0
+    }));
+
+    const reqRef = doc(db, "priceRequests", request.id);
+    await updateDoc(reqRef, {
+      status: "displayed",
+      items: updatedItems
+    });
+    alert("Prices displayed to customer successfully!");
+  };
 
   // Fetch orders in real-time
   useEffect(() => {
@@ -112,6 +149,100 @@ const Admin = () => {
           ))}
         </tbody>
       </table>
+
+      {/* --- PRICE REQUESTS SECTION (Placed between Orders and Feedbacks) --- */}
+      <h2 style={{ marginTop: '40px' }}>Price Requests</h2>
+      {priceRequests.length === 0 ? (
+        <p>No price requests found.</p>
+      ) : (
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '40px' }}>
+          <thead>
+            <tr style={{ background: '#f4f4f4', textAlign: 'left' }}>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Customer Name</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Phone Number</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Date & Time</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Item & Size</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Quantity</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Status</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Timer</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Action (Enter Price)</th>
+              <th style={{ padding: '10px', border: '1px solid #ddd' }}>Display</th>
+            </tr>
+          </thead>
+          <tbody>
+            {priceRequests.map((req) => {
+              const itemCount = req.items ? req.items.length : 1;
+              const isDisplayed = req.status === "displayed";
+
+              return req.items.map((item, itemIndex) => (
+                <tr key={`${req.id}-${itemIndex}`}>
+                  {/* Columns 1, 2, 3: Customer details and timestamp are spanned across item rows */}
+                  {itemIndex === 0 && (
+                    <>
+                      <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle', fontWeight: 'bold' }}>
+                        {req.customerName}
+                      </td>
+                      <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle' }}>
+                        {req.customerMobile}
+                      </td>
+                      <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle' }}>
+                        {req.requestTime}
+                      </td>
+                    </>
+                  )}
+
+                  {/* Column 4: Item with size */}
+                  <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                    {item.name} {item.size ? `(Size: ${item.size})` : ""}
+                  </td>
+
+                  {/* Column 5: Quantity */}
+                  <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                    {item.quantity}
+                  </td>
+
+                  {/* Column 6: Status */}
+                  {itemIndex === 0 && (
+                    <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle', fontWeight: 'bold', color: isDisplayed ? 'green' : 'orange' }}>
+                      {req.status || "pending"}
+                    </td>
+                  )}
+
+                  {/* Column 7: Timer */}
+                  {itemIndex === 0 && (
+                    <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle' }}>
+                      {isDisplayed ? "Paused (Displayed)" : "60 mins (Running)"}
+                    </td>
+                  )}
+
+                  {/* Column 8: Action (Individual Price Input Boxes) */}
+                  <td style={{ padding: '10px', border: '1px solid #ddd' }}>
+                    <input 
+                      type="number" 
+                      placeholder="Enter price" 
+                      value={priceInputs[`${req.id}-${itemIndex}`] ?? (item.price || "")}
+                      onChange={(e) => handlePriceChange(req.id, itemIndex, e.target.value)}
+                      style={{ width: '90px', padding: '4px' }}
+                    />
+                  </td>
+
+                  {/* Column 9: Display Button */}
+                  {itemIndex === 0 && (
+                    <td rowSpan={itemCount} style={{ padding: '10px', border: '1px solid #ddd', verticalAlign: 'middle' }}>
+                      <button 
+                        onClick={() => handleDisplayPrices(req)}
+                        style={{ backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px' }}
+                      >
+                        Display
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              ));
+            })}
+          </tbody>
+        </table>
+      )}
 
       {/* --- FEEDBACK SECTION --- */}
       <h2 style={{ marginTop: '40px' }}>Customer Feedbacks</h2>

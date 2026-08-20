@@ -4,6 +4,7 @@ import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/f
 import './orderHistory.css';
 
 const OrderHistory = () => {
+  const [paymentModes, setPaymentModes] = useState({});
   const [orders, setOrders] = useState([]);
 
   // Fetch orders in real-time from Firebase
@@ -58,6 +59,28 @@ const OrderHistory = () => {
             <div className="order-details">
               <p>Placed on: {order.time}</p>
               <p>Items & Quantities: {order.items?.map(item => `${item.name} (x${item.quantity || 1})`).join(', ')}</p>
+              <p>Total Amt: Rs. {order.total || 0}</p>
+              {/* --- ADD START: Mode of payment dropdown and conditional Pay button --- */}
+              <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <label style={{ fontSize: '14px' }}>Select mode of payment:</label>
+                <select 
+                  value={paymentModes[order.id] || ""} 
+                  onChange={(e) => setPaymentModes({ ...paymentModes, [order.id]: e.target.value })}
+                  style={{ padding: '4px' }}
+                >
+                  <option value="">--Select--</option>
+                  <option value="cash">cash</option>
+                  <option value="online">online</option>
+                </select>
+                {paymentModes[order.id] === 'online' && (
+                  <button 
+                    onClick={() => window.open('https://via.placeholder.com/300?text=Scan+QR+Code+to+Pay', '_blank')}
+                    style={{ padding: '4px 10px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    Pay
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Status Tracking Bar */}
