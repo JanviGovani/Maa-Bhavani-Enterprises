@@ -28,13 +28,21 @@ const items = [
 ];
 
 const ProductSizes = () => {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
 
   const { id } = useParams(); // Gets the ID of the clicked product
   const navigate = useNavigate();
 
   // 1. Add the loading state (set to true initially)
   const [loading, setLoading] = useState(true);
+
+  // This is a placeholder array. In a real app, you'd filter this based on the ID.
+  const sizeVariations = [
+    { sizeId: 1, label: "Size-2.5", img: "https://via.placeholder.com/150?text=Size-2.5" },
+    { sizeId: 2, label: "Size-3",   img: "https://via.placeholder.com/150?text=Size-3" },
+    { sizeId: 3, label: "Size-3.5", img: "https://via.placeholder.com/150?text=Size-3.5" },
+    { sizeId: 4, label: "Size-4",   img: "https://via.placeholder.com/150?text=Size-4" },
+  ];
 
   // 2. Use useEffect to flip loading to false after 300ms
   useEffect(() => {
@@ -47,43 +55,82 @@ const ProductSizes = () => {
 
   const [quantity, setQuantity] = useState(1); // Default to 1
   const [isAdded, setIsAdded] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(null); 
 
   const product = items.find((item) => item.id === parseInt(id));
+  
+  const [selectedSize, setSelectedSize] = useState(() => {
+    if (!product || !product.hasSizes) return sizeVariations[0]?.label || "";
+    // Find any cart item belonging to this product ID
+    const existingProductInCart = cart.find(ci => ci.id.toString().startsWith(product.id.toString()));
+    if (existingProductInCart) {
+      // Extract the size suffix from the cart item ID (e.g., if ID is "1Size-3", extract "Size-3")
+      const matchedVariant = sizeVariations.find(v => existingProductInCart.id === product.id + v.label);
+      if (matchedVariant) return matchedVariant.label;
+    }
+    return sizeVariations[0].label; // Fallback to first size
+  }); 
 
+  // Sync quantity and existing cart state whenever the product, size, or global cart updates
+  useEffect(() => {
+    if (!product) return;
+    
+    // Ensure the ID matching logic mirrors home.jsx (uses "Standard" if no sizes or sizes aren't selected yet)
+    let cartItemId;
+    if (product.hasSizes) {
+      if (!selectedSize) {
+        setQuantity(1);
+        return;
+      }
+      cartItemId = product.id + selectedSize;
+    } else {
+      cartItemId = product.id + "Standard"; // Must match handleHomeAddToCart suffix
+    }
+
+    const existingCartItem = cart.find(ci => ci.id === cartItemId);
+
+    if (existingCartItem) {
+      setQuantity(existingCartItem.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [id, selectedSize, cart, product]);
 
   const handleAddToCart = () => {
-    // If the product has sizes but none is selected, stop the user
     if (product.hasSizes && !selectedSize) {
         alert("Please select a size first!");
         return;
     }
 
-    // This creates the object that CartPage.jsx expects
+    const currentSize = selectedSize || "Standard";
+    const cartItemId = product.id + currentSize;
+    
+    // Create the exact item payload using the input box's quantity value directly
     const itemToAdd = {
         name: product.name,
         image: product.image,
-        size: selectedSize || "Standard", // Default to 'Standard' if no size exists
-        quantity: quantity,
-        id: product.id + (selectedSize || "") // Unique ID for cart management
+        size: currentSize,
+        quantity: Number(quantity) || 1, // Directly use whatever number is typed in the box
+        id: cartItemId
     };
 
-    addToCart(itemToAdd); 
+    // Use addToCart to set or overwrite the item with the exact quantity specified
+    addToCart(itemToAdd, 0); // Pass 0 or handle it as an absolute set in context if needed
+
     setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 3000);
-};
+    // OPTIONAL: Remove or keep this timeout. If you want the green visual feedback 
+    // to trigger temporarily on click while 'isInCart' keeps it green permanently, 
+    // you can leave it, or remove it so it switches instantly.
+    setTimeout(() => setIsAdded(false), 2000); 
+  };
   
   if (loading) {
     return <Loader />;
   }
 
-  // This is a placeholder array. In a real app, you'd filter this based on the ID.
-  const sizeVariations = [
-    { sizeId: 1, label: "Size-2.5", img: "https://via.placeholder.com/150?text=Size-2.5" },
-    { sizeId: 2, label: "Size-3",   img: "https://via.placeholder.com/150?text=Size-3" },
-    { sizeId: 3, label: "Size-3.5", img: "https://via.placeholder.com/150?text=Size-3.5" },
-    { sizeId: 4, label: "Size-4",   img: "https://via.placeholder.com/150?text=Size-4" },
-  ];
+  // Check if current item/variation is already in the cart
+  const currentSize = product.hasSizes ? (selectedSize || "") : "Standard";
+  const cartItemId = product.id + currentSize;
+  const isInCart = cart.some(ci => ci.id === cartItemId);
 
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
@@ -163,7 +210,7 @@ const ProductSizes = () => {
             disabled={!quantity} // Button turns off if box is empty
             style={{
               padding: '10px 25px',
-              backgroundColor: isAdded ? '#28a745' : '#007bff', // Green when added, Blue normally
+              backgroundColor: (isAdded || isInCart) ? '#28a745' : '#007bff', // Green when added, Blue normally
               color: 'white',
               border: 'none',
               borderRadius: '5px',
@@ -173,7 +220,7 @@ const ProductSizes = () => {
               opacity: !quantity ? 0.5 : 1, // Make it look faded when disabled
             }}
           >
-            {isAdded ? "Added to Cart ✓" : "Add to Cart"}
+            {(isAdded || isInCart) ? "Added to Cart ✓" : "Add to Cart"}
           </button>
           </div>
 
@@ -231,7 +278,7 @@ const ProductSizes = () => {
               opacity: !quantity ? 0.5 : 1, // Make it look faded when disabled
             }}
           >
-            {isAdded ? "Added to Cart ✓" : "Add to Cart"}
+            {(isAdded || isInCart) ? "Added to Cart ✓" : "Add to Cart"}
           </button>
           </div>
         </div>

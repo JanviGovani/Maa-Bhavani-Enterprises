@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../components/loader'; 
+import { useCart } from '../components/cartContext';
 import './home.css';
 
 const items = [
@@ -78,6 +79,14 @@ function Home({ searchTerm, favorites, toggleFavorite }) {
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const { addToCart, cart } = useCart();
+
+  // Handler for quick cart addition directly from the homepage card
+  const handleQuickAddToCart = (e, item) => {
+    e.stopPropagation(); // Prevents card click from opening product detail page
+    addToCart(item, 1);  // Adds 1 quantity directly
+  };
+
   useEffect(() => {
     const slideTimer = setInterval(() => {
       setCurrentSlide((prev) => (prev === slideImages.length - 1 ? 0 : prev + 1));
@@ -90,6 +99,17 @@ function Home({ searchTerm, favorites, toggleFavorite }) {
   };
 
   if (loading) return <Loader />;
+
+  const handleHomeAddToCart = (e, item, amount) => {
+    e.stopPropagation();
+    const cartItemId = item.id + "Standard"; // Ensures it matches non-sized or default standard items correctly
+    const itemPayload = {
+      ...item,
+      id: cartItemId,
+      size: "Standard"
+    };
+    addToCart(itemPayload, amount);
+  };
 
   return (
   <div className="app-content">
@@ -147,6 +167,37 @@ function Home({ searchTerm, favorites, toggleFavorite }) {
             className="item-image"
           />
           <h3 className="item-name">{item.name}</h3>
+          {/* Quantity Controls / Add to Cart Button at Bottom Right */}
+          {/* Check if the item does NOT have sizes before showing quick-cart controls */}
+          {!item.hasSizes && (
+            <div className="quick-cart-icon" onClick={(e) => e.stopPropagation()}>
+              {cart.some(cartItem => cartItem.id === `${item.id}Standard`) ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 'bold' }}>
+                  <button 
+                    onClick={(e) => handleHomeAddToCart(e, item, -1)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                  >
+                    -
+                  </button>
+                  <span>{cart.find(cartItem => cartItem.id === `${item.id}Standard`)?.quantity || 1}</span>
+                  <button 
+                    onClick={(e) => handleHomeAddToCart(e, item, 1)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                  >
+                    +
+                  </button>
+                </div>
+              ) : (
+                <div 
+                  onClick={(e) => handleHomeAddToCart(e, item, 1)}
+                  title="Add to Cart"
+                  style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                >
+                  <span>🛒</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>

@@ -19,25 +19,35 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
   }, [cart]);
   
-  const addToCart = (item) => {
+  const addToCart = (item, amount = 1) => {
     setCart((prev) => {
-      // Ensure the incoming item has a quantity, defaulting to 1 if missing
-      const quantityToAdd = Number(item.quantity) || 1;
-      
-      // Check if item already exists in cart (optional: match by name or id)
-      const existingIndex = prev.findIndex((cartItem) => cartItem.name === item.name && cartItem.size === item.size);
+      const existingIndex = prev.findIndex((cartItem) => 
+        cartItem.id === item.id || (cartItem.name === item.name && cartItem.size === item.size)
+      );
 
       if (existingIndex > -1) {
-        // If it exists, add to the quantity
         const updated = [...prev];
+        const currentQty = Number(updated[existingIndex].quantity) || 1;
+        
+        // Always calculate the new quantity using the relative 'amount' (+1 or -1) 
+        // unless an absolute override is explicitly intended.
+        // If amount is 0, use item.quantity as an absolute override. Otherwise, add amount relative.
+        const newQuantity = amount === 0 ? (item.quantity !== undefined ? item.quantity : currentQty) : currentQty + amount;
+
+        if (newQuantity <= 0) {
+          return updated.filter((_, index) => index !== existingIndex);
+        }
+
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: (Number(updated[existingIndex].quantity) || 1) + quantityToAdd
+          ...item,
+          quantity: newQuantity
         };
         return updated;
       } else {
-        // If it's new, add it with the correct quantity
-        return [...prev, { ...item, quantity: quantityToAdd }];
+        // Use item.quantity if provided, otherwise fallback to amount or 1
+        const initialQty = item.quantity !== undefined ? item.quantity : (amount > 0 ? amount : 1);
+        return [...prev, { ...item, quantity: initialQty }];
       }
     });
   };
